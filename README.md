@@ -42,6 +42,7 @@ python dist/train_DFNets.py
 
 ## Visualization of displacement fields
 ```she
+cd ..
 cd DFNet_train
 python dist/visual_dfhat_arrow.py
 ```
@@ -50,12 +51,14 @@ Here are some sample displacement field visualizations:
 
 ## Training of EFNet
 ```she
+cd ..
 cd EFNet_train
 python dist/train_EFNet.py
 ```
 
 ## Inference of EFNet
 ```she
+cd ..
 cd EFNet_test
 python dist/Test_InSeg_GET_softmax_with_pw.py
 ```
@@ -65,6 +68,7 @@ Here shows the schematic diagram in which DF is used to seperate adherent glands
 
 ## Score of three metrics
 ```she
+cd ..
 cd metrics
 python dist/metrics522x768.py
 ```
