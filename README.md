@@ -11,7 +11,6 @@ of which 85 are training set and 80 are test set.
 ## Installation
 ### Step 1: 
 **Install packages according to requirements:**  
-
 torch    1.10.1+cu102  
 dgl-cu102    0.9.1  
 opencv-python    4.5.4.60  
@@ -32,8 +31,7 @@ Then use the following commands to merge the 8 sub-files into a whole and unzip 
 cat DFGET_encryption_* > DFGET_encryption.zip 
 unzip -o DFGET_encryption.zip
 ```
-Use cd to enter the "DFGET_encryption" folder, Execute the following commands in sequence to complete the training,  
-testing, and scoring
+Use cd to enter the "DFGET_encryption" folder, Execute the following commands in sequence to complete the training, testing, and scoring
 
 
 ## Training of DFNet
