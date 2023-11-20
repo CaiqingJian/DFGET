@@ -9,10 +9,9 @@ Transmitter for Gland Instance Segmentation".
 Install packages according to requirements.txt.  
 ### Step 2: 
 Download the 8 sub-files from DFGET_encryption_aa to DFGET_encryption_ah and put these 8 files in the same folder.  
-Then use the following command to merge the 8 sub-files into a whole:  
-```bash
-cat DFGET_encryption_* > DFGET_encryption.zip
-```bash
+Then use the following commands to merge the 8 sub-files into a whole and unzip:  
+`cat DFGET_encryption_* > DFGET_encryption.zip`  
+`unzip -o -d /home/sunny myfile.zip`
 
 
 
