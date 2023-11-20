@@ -10,7 +10,20 @@ of which 85 are training set and 80 are test set.
 
 ## Installation
 ### Step 1: 
-Install packages according to requirements.txt.  
+**Install packages according to requirements:**
+torch    1.10.1+cu102  
+dgl-cu102    0.9.1  
+opencv-python    4.5.4.60  
+numpy    1.20.3  
+matplotlib    3.2.2  
+tqdm    4.62.3  
+labelme    5.0.1  
+albumentations    1.1.0  
+scipy    1.7.1  
+scikit-image    0.18.3  
+scikit-learn    0.24.2  
+
+
 ### Step 2: 
 Download the 8 sub-files from DFGET_encryption_aa to DFGET_encryption_ah and put these 8 files in the same folder ./DFGET.  
 Then use the following commands to merge the 8 sub-files into a whole and unzip it:  
