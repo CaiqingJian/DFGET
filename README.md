@@ -10,7 +10,8 @@ of which 85 are training set and 80 are test set.
 
 ## Installation
 ### Step 1: 
-**Install packages according to requirements:**
+**Install packages according to requirements:**  
+
 torch    1.10.1+cu102  
 dgl-cu102    0.9.1  
 opencv-python    4.5.4.60  
