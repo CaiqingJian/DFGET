@@ -1,8 +1,7 @@
-# DFGET: Displacement-Field-Assisted Graph Energy Transmitter for Gland Instance Segmentation
+# DFGET
 
 ## Introduction
-This repository is the official implementation of the paper, "DFGET: Displacement-Field-Assisted Graph Energy  
-Transmitter for Gland Instance Segmentation".
+This repository is the implementation of DFGET.
 
 ## Dataset
 The GlaS dataset used in this paper comes from the Gland Challenge of MICCAI 2015 [<sup>1</sup>](#refer-anchor-1), including 165 images,  
