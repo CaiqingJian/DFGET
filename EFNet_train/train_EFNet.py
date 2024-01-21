@@ -185,28 +185,6 @@ def visual_DF(DF_label_i, df_hat_i, y_binary, bound_mask, imgname, DFId): # df_h
     color_DF[bound_mask==1] = 255 # 
     cv2.imwrite(model_dir + '/visual_DF/%s_DFhat_%s.png'%(imgname, DFId), color_DF)
 ###############################################################################
-#   
-###############################################################################
-def evaluate_score(bg4, bg8, valid_iter, test_imgnames, net, epoch): 
-    iou_sum, n = 0, 0 # 
-    for imgname, Xy in zip(test_imgnames, valid_iter):
-        X, y = Xy[:,:3,:,:], Xy[:,3,:,:]
-        X = (X.float()/255).to(device) 
-        y = y.float().to(device) # -> (B, 128, 192)
-        #
-        semantic_label = (y > 0.5).float().squeeze() # 
-        ###########################################
-        df_hat, bg8 = net_DVF(X, bg4, bg8) # df_hat(2, 256, 384) | 
-        y_hat = net(X, bg8) # 
-        semantic_seg = th.round(y_hat) # 
-        ###########################################
-        n += len(y)
-        iou_sum += IoU(semantic_seg.squeeze(), semantic_label.squeeze()).item()
-        #
-    valN_iou = iou_sum/n
-    return valN_iou # 
-###############################################################################
-
 
 ###############################################################################
 def IoU(yhat, gy): # yhat(256, 384)  gy(256, 384)
@@ -233,9 +211,8 @@ def L2IoULoss(yhat, gy): # yhat(256, 384)  gy(256, 384)
     return 2*l2loss - iousoft, iou
 ###############################################################################
 
-   
 ###############################################################################
-def train(bg4, bg8, train_iter, valid_iter, test_imgnames, batch_size, net, fold, num_epochs, lr):
+def train(bg4, bg8, train_iter, test_imgnames, batch_size, net, fold, num_epochs, lr):
     optimizer = th.optim.Adam(net.parameters(), lr=lr) 
     scheduler = th.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='max', factor=0.8, patience=6) #
     #
@@ -271,9 +248,7 @@ def train(bg4, bg8, train_iter, valid_iter, test_imgnames, batch_size, net, fold
             traN_loss = traN_l_sum/n
             traN_iou = traN_iou_sum/n
             #
-            valN_iou = evaluate_score(bg4, bg8, valid_iter, test_imgnames, net, epoch)
             current_lr = optimizer.state_dict()['param_groups'][-1]['lr'] #
-            scheduler.step(valN_iou) 
             epochs = "Epoch {:05d} | lr {:.8f} | Time(s) {:.4f} | traN_loss {:.4f} | \n".format(
                         epoch, current_lr, time.time()-time0, traN_loss)
             trains1 = "| traN_iou {:.4f} | valN_iou {:.4f} \n".format(traN_iou, valN_iou)
@@ -282,10 +257,8 @@ def train(bg4, bg8, train_iter, valid_iter, test_imgnames, batch_size, net, fold
             train_log.append(epochs + trains1 + '# ============= \n#\n# =============')
             write_txt(train_log[-1], model_dir +'/train_log_fold%s.txt'%fold, mode="a")
             #
-            if valN_iou0 < valN_iou: #
-                file_name = model_dir + '/EFnet.pth.tar'
-                th.save({'state_dict': net.state_dict()}, file_name)
-                valN_iou0 = valN_iou
+            file_name = model_dir + '/EFnet.pth.tar'
+            th.save({'state_dict': net.state_dict()}, file_name)
         write_txt(train_log, model_dir +'/train_log_fold%s.txt'%fold, mode="w")
 # =============================================================================
 
@@ -307,23 +280,13 @@ if True:
     assert train_data.shape == (85, 4, 256, 384)
     print('train_data.shape: ', train_data.shape)
     #
-    test_data = np.load(data_dir + '/test_Img_InLabel.npy') # 
-    test_data = th.from_numpy(test_data)
-    test_data = test_data.permute(0, 3, 1, 2)
-    assert test_data.shape == (80, 4, 256, 384)
-    print('test_data.shape: ', test_data.shape) 
-    #
-    test_imgnames = np.load(data_dir + '/imgnames_for_test_Img_InLabel_original.npy')
-    #
     train_iter = th.utils.data.DataLoader(train_data, batch_size=batch_size, shuffle=True, drop_last=False) 
-    test_iter = th.utils.data.DataLoader(test_data, batch_size=batch_size, shuffle=False, drop_last=False) 
-    # #
     #
     for fold in range(3,4):
         print('train fold %d'%fold)
         print('random seed %d'%(2021*fold))
         setup_seed(2021*fold) 
-        train(bg4, bg8, train_iter, test_iter, test_imgnames, batch_size, net, fold, num_epochs, lr)
+        train(bg4, bg8, train_iter, batch_size, net, fold, num_epochs, lr)
 # =============================================================================
     
     
