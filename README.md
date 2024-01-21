@@ -4,7 +4,7 @@
 This repository is the implementation of DFGET.
 
 ## Dataset
-The GlaS dataset used in this paper comes from the Gland Challenge of MICCAI 2015 [<sup>1</sup>](#refer-anchor-1), including 165 images,  
+The GlaS dataset used comes from the Gland Challenge of MICCAI 2015 [<sup>1</sup>](#refer-anchor-1), including 165 images,  
 of which 85 are training set and 80 are test set.
 
 ## Installation
@@ -24,7 +24,7 @@ scikit-learn    0.24.2
 
 
 ### Step 2: 
-Download the 8 sub-files from DFGET_encryption_aa to DFGET_encryption_ah and put these 8 files in the same folder ./DFGET.  
+Download the 8 sub-files from DFGET_encryption_aa to DFGET_encryption_ah in the "executable" folder and put these 8 files in the same folder ./DFGET.  
 Then use the following commands to merge the 8 sub-files into a whole and unzip it:  
 ```she
 cat DFGET_encryption_* > DFGET_encryption.zip 
