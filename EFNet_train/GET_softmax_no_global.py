@@ -1,8 +1,4 @@
 """
-I:\DataSet\GLAS\论文1-实验\消融实验\GET_softmax_no_global\0715-1637_GET_softmax_with_pw
-/home/jcq/python_code/GLAS/GNT_InstanceSeg/Instance_Seg/Ablation/GET_softmax_no_global/with_pw
-》》 在“0712-2043”中将 relu(+-)换成softmax
-》》 在EncoderLayer消息传递处使用势能阱约束。
 """
 
 #=======================================================================================================================
@@ -42,8 +38,8 @@ def conv_lkrelu(in_num, out_num, kernel_size=3, padding=1, stride=1, groups=1, s
 class DoubleConv(nn.Module):
     def __init__(self, in_channels, out_channels):
         super(DoubleConv, self).__init__()
-        self.layer0 = conv_batch(in_channels, in_channels*4, kernel_size=3, padding=1, groups=in_channels) # 聚合空间信息
-        self.layer1 = conv_batch(in_channels*4, out_channels, kernel_size=1, padding=0, groups=1) # 整合通道信息
+        self.layer0 = conv_batch(in_channels, in_channels*4, kernel_size=3, padding=1, groups=in_channels) # 
+        self.layer1 = conv_batch(in_channels*4, out_channels, kernel_size=1, padding=0, groups=1) # 
     def forward(self, x):
         skip = x
         out = self.layer0(x)
@@ -56,7 +52,7 @@ class Inc(nn.Module):
         super(Inc, self).__init__()
         self.conv1 = conv_lkrelu(in_channels, out_channels, kernel_size=kernel_size, padding=padding, stride=stride)
         # self.conv1 = conv_batch(in_channels, out_channels, kernel_size=kernel_size, padding=padding, stride=stride) # conv_lkrelu
-        conv2s = [] # 残差
+        conv2s = [] # 
         for i in range(num_blocks):
             conv2s.append( DoubleConv(out_channels, out_channels) )
         self.conv2 = nn.Sequential(*conv2s)
@@ -68,21 +64,20 @@ class Inc(nn.Module):
 class Down(nn.Module):
     def __init__(self, in_channels, out_channels, num_blocks=1, kernel_size=3, padding=0, stride=2):
         super(Down, self).__init__()
-        # 降采样
-        self.pad1 = nn.ReplicationPad2d((1,0,1,0)) # (左=1,右=0,上=1,下=0)
-        self.conv1 = lkrelu_conv(in_channels, in_channels, kernel_size=kernel_size, padding=0, stride=stride, groups=in_channels) # 降采
-        # self.conv1 = conv_batch(in_channels, in_channels, kernel_size=kernel_size, padding=0, stride=stride) # 降采
-        self.pad2 = nn.ReplicationPad2d((0,1,1,0)) # (左=0,右=1,上=1,下=0)
-        self.conv2 = lkrelu_conv(in_channels, in_channels, kernel_size=kernel_size, padding=0, stride=stride, groups=in_channels) # 降采
-        # self.conv2 = conv_batch(in_channels, in_channels, kernel_size=kernel_size, padding=0, stride=stride) # 降采
-        self.pad3 = nn.ReplicationPad2d((1,0,0,1)) # (左=1,右=0,上=0,下=1)
-        self.conv3 = lkrelu_conv(in_channels, in_channels, kernel_size=kernel_size, padding=0, stride=stride, groups=in_channels) # 降采
-        # self.conv3 = conv_batch(in_channels, in_channels, kernel_size=kernel_size, padding=0, stride=stride) # 降采
-        self.pad4 = nn.ReplicationPad2d((0,1,0,1)) # (左=0,右=1,上=0,下=1)
-        self.conv4 = lkrelu_conv(in_channels, in_channels, kernel_size=kernel_size, padding=0, stride=stride, groups=in_channels) # 降采
-        # self.conv4 = conv_batch(in_channels, in_channels, kernel_size=kernel_size, padding=0, stride=stride) # 降采
-        self.fuse = conv_batch(in_channels*4, out_channels, kernel_size=1, padding=0, stride=1) # 融合 [左上，右上，左下，右下]
-        # 残差
+        self.pad1 = nn.ReplicationPad2d((1,0,1,0)) # 
+        self.conv1 = lkrelu_conv(in_channels, in_channels, kernel_size=kernel_size, padding=0, stride=stride, groups=in_channels) # 
+        # self.conv1 = conv_batch(in_channels, in_channels, kernel_size=kernel_size, padding=0, stride=stride) # 
+        self.pad2 = nn.ReplicationPad2d((0,1,1,0)) # 
+        self.conv2 = lkrelu_conv(in_channels, in_channels, kernel_size=kernel_size, padding=0, stride=stride, groups=in_channels) #
+        # self.conv2 = conv_batch(in_channels, in_channels, kernel_size=kernel_size, padding=0, stride=stride) # 
+        self.pad3 = nn.ReplicationPad2d((1,0,0,1)) # 
+        self.conv3 = lkrelu_conv(in_channels, in_channels, kernel_size=kernel_size, padding=0, stride=stride, groups=in_channels) # 
+        # self.conv3 = conv_batch(in_channels, in_channels, kernel_size=kernel_size, padding=0, stride=stride) # 
+        self.pad4 = nn.ReplicationPad2d((0,1,0,1)) # 
+        self.conv4 = lkrelu_conv(in_channels, in_channels, kernel_size=kernel_size, padding=0, stride=stride, groups=in_channels) # 
+        # self.conv4 = conv_batch(in_channels, in_channels, kernel_size=kernel_size, padding=0, stride=stride) # 
+        self.fuse = conv_batch(in_channels*4, out_channels, kernel_size=1, padding=0, stride=1) # 
+        # 
         resconvs = [] 
         for i in range(num_blocks):
             resconvs.append( DoubleConv(out_channels, out_channels) )
@@ -97,12 +92,12 @@ class Down(nn.Module):
         return self.resconvs(xf)
 # =============================================================================
 # =============================================================================
-class Up(nn.Module): # Decoder的过渡层，上采样分发
-    def __init__(self, in_channels=128, out_channels=64*4, num_blocks=2, k=3, pad=1): # out_channels 是 in_channels 的4倍
+class Up(nn.Module): # 
+    def __init__(self, in_channels=128, out_channels=64*4, num_blocks=2, k=3, pad=1): # 
         super(Up, self).__init__()
         self.conv_kxk = lkrelu_conv(in_channels, out_channels, kernel_size=k, padding=pad, stride=1, groups=out_channels//4, slope=0.1) # 
         # self.conv_kxk = conv_batch(in_channels, out_channels, kernel_size=3, padding=1, stride=1, groups=out_channels//4, slope=0.1) # 
-        conv2s = [] # 残差
+        conv2s = [] # 
         for i in range(num_blocks):
             conv2s.append( DoubleConv(out_channels//4, out_channels//4) )
         self.conv2 = nn.Sequential(*conv2s)
@@ -121,21 +116,21 @@ class DoubleConvUp(nn.Module):
     def __init__(self, in_channels, out_channels):
         super(DoubleConvUp, self).__init__()
         self.layer0 = conv_batch(in_channels, out_channels, kernel_size=1, padding=0, groups=1)
-        self.layer1 = lkrelu_conv(out_channels, out_channels, kernel_size=3, padding=1, groups=out_channels) # 聚合空间信息
-        # self.layer1 = conv_batch(out_channels, out_channels, kernel_size=3, padding=1, groups=out_channels) # 聚合空间信息
+        self.layer1 = lkrelu_conv(out_channels, out_channels, kernel_size=3, padding=1, groups=out_channels) # 
+        # self.layer1 = conv_batch(out_channels, out_channels, kernel_size=3, padding=1, groups=out_channels) # 
     def forward(self, x):
         out = self.layer0(x)
         out = self.layer1(out)
         return out
 # =============================================================================
 # =============================================================================
-class UpMerge(nn.Module): # 上采样，并融合浅层特征
+class UpMerge(nn.Module): #
     def __init__(self, in_channels, out_channels, num_blocks=1):
         super(UpMerge, self).__init__()
         self.conv_3x3 = lkrelu_conv(in_channels, out_channels, kernel_size=3, padding=1, stride=1, groups=out_channels//4, slope=0.1) # 
         # self.conv_3x3 = conv_batch(in_channels, out_channels, kernel_size=3, padding=1, stride=1, groups=out_channels//4, slope=0.1) # 
         self.conv = DoubleConvUp(in_channels, in_channels//2)
-        conv2s = [] # 残差
+        conv2s = [] # 
         for i in range(num_blocks):
             conv2s.append( DoubleConv(out_channels//4, out_channels//4) )
         self.conv2 = nn.Sequential(*conv2s)
@@ -184,70 +179,55 @@ class ConvEncoder(nn.Module):
 
 
 #=======================================================================================================================
-"""--------------------------------- GST + Output --------------------------------"""
 #=======================================================================================================================
 class EncoderLayer(nn.Module):
     def __init__(self, d_model=256, d_signal=1):
         super(EncoderLayer, self).__init__()
         self.d_signal = d_signal
-        # 位置感知
+        #
         self.PPM = nn.Sequential(
             conv_batch(d_model, d_model, kernel_size=17, padding=8, groups=d_model),
             conv_batch(d_model, d_model, kernel_size=1, padding=0, groups=1))
         self.FFN_1 = nn.Sequential(
             conv_batch(d_model, d_model, kernel_size=1, padding=0, groups=1),
             conv_batch(d_model, d_model, kernel_size=1, padding=0, groups=1))
-        # 分发
+        # 
         self.Dis = nn.Sequential(
             nn.Linear(d_model, d_model),
             nn.LeakyReLU(),
             nn.Linear(d_model, 289*d_signal))
         self.act = nn.ReLU() # nn.Sequential(nn.LeakyReLU(5), nn.Sigmoid())
         self.bn = nn.BatchNorm1d(d_model, affine=True, track_running_stats=False) # 
-        # 变换
-        self.FFN_2 = DoubleConv(d_model, d_model) # 带跳跃连接
+        # 
+        self.FFN_2 = DoubleConv(d_model, d_model) # 
         #
     def forward(self, bg, shape): # X(6144, 256)
         InfoIdx = bg.edata['InfoIdx']
         X = bg.ndata['X'] # (6144, 256)
         X = X.permute(1,0).reshape(shape) # -> (1, 256, 64, 96)
-        # 位置感知
+        # 
         X = X + self.PPM(X)
         X = X + self.FFN_1(X) # -> (1, 256, 64, 96)
-        # 分发
+        # 
         X = X.reshape((shape[1], -1)).permute(1,0) # -> (6144, 256)
         signal = self.Dis(X) # -> (6144, 289*d_signal)
         signal = signal.reshape((-1, 289, self.d_signal)) # -> (6144, 289, d_signal)
         src = signal[InfoIdx[:,0], InfoIdx[:,1]] # -> (num_edges, d_signal)
         dst = signal[InfoIdx[:,2], InfoIdx[:,3]] # -> (num_edges, d_signal)
-        E = src + dst # -> (num_edges, d_signal)  E用于求 edge_link
-        # 
-        # E_mskd = E * bg.edata['edgmsk'] # 将能量传递限定在同一势能阱
-        # bg.edata['aij'] = self.act(E_mskd) # 吸引
-        # bg.edata['rij'] = self.act(-E_mskd) # 排斥
-        # bg.update_all(fn.copy_e('aij', 'm'), fn.sum('m', 'A_sum')) # A_sum 吸引权重之和  | 作为散度
-        # bg.update_all(fn.copy_e('rij', 'm'), fn.sum('m', 'R_sum')) # R_sum 排斥权重之和
-        # denominator = bg.ndata['A_sum'] + bg.ndata['R_sum'] + 1e-2 # -> (6144, d_signal, 1)
-        # bg.ndata['X'] = X # 更新 X
-        # X_skip = bg.ndata['X']
-        # bg.update_all(fn.u_mul_e('X', 'aij', 'm'), fn.sum('m', 'XA_sum')) # -> (6144, 256)
-        # X_trans = (bg.ndata['XA_sum'] + bg.ndata['X'] * bg.ndata['R_sum']) / denominator # -> (6144, 256)
-        # bg.ndata['X'] = X_skip + self.bn(X_trans) # -> (6144, 256)
+        E = src + dst #
         #
-        # 将relu(+-)换成softmax
-        bg.edata['aij'] = th.exp(E.clamp(-5,5)) * bg.edata['edgmsk'] # 将能量传递限定在同一势能阱
-        """ 注意：这里edgmsk一定要在exp之后使用，因为exp(0)==1 """
-        # bg.edata['aij'] = th.exp(E.clamp(-5,5)) # 限定E范围防止指数爆炸
+        bg.edata['aij'] = th.exp(E.clamp(-5,5)) * bg.edata['edgmsk'] # 
+        # bg.edata['aij'] = th.exp(E.clamp(-5,5)) # 
         bg.update_all(fn.copy_e('aij', 'm'), fn.sum('m', 'A_sum'))
-        bg.ndata['X'] = X # 更新 X
+        bg.ndata['X'] = X #
         X_skip = bg.ndata['X']
         bg.update_all(fn.u_mul_e('X', 'aij', 'm'), fn.sum('m', 'XA_sum')) # -> (6144, 256)
         X_trans = bg.ndata['XA_sum']  / (bg.ndata['A_sum'] + 1e-5) # -> (6144, 256)
         bg.ndata['X'] = X_skip + self.bn(X_trans) # -> (6144, 256)
         #
-        # 变换
+        # 
         X = bg.ndata['X'].permute(1,0).reshape(shape)  # -> (256, 6144) -> (1, 256, 64, 96)
-        bg.ndata['X'] = self.FFN_2(X).reshape((shape[1], -1)).permute(1,0) # 更新 X 传到下一层
+        bg.ndata['X'] = self.FFN_2(X).reshape((shape[1], -1)).permute(1,0) # 
         #
         # return E
 # =============================================================================
@@ -269,8 +249,8 @@ class GSTransmitter(nn.Module):
             for i in range(self.numlayer):
                 self.encoderlist[i](bg, shape)
                 # Es.append(E)
-            nfeat = bg.ndata['X'] # 节点能量特征 
-        # bg.edata['E'] = E # 最后一层 E 用于裁剪bg得到sg，然后sg上求 E 邻域均值作为节点散度。
+            nfeat = bg.ndata['X'] # 
+        # bg.edata['E'] = E # 
         # Es = th.cat(Es, dim=1) # -> (num_edges, numlayer)
         # edge_hat = self.edge_out(Es)
         return nfeat
@@ -281,29 +261,24 @@ class GSTransmitter(nn.Module):
 class GETLayer_inter1(nn.Module):
     def __init__(self, d_model=256):
         super(GETLayer_inter1, self).__init__()
-        self.d_model = d_model # 能量特征维度
+        self.d_model = d_model #
         self.Dis = nn.Linear(d_model, d_model//16, bias=False)
-        self.act = nn.ReLU() # 对 E 进行激活
+        self.act = nn.ReLU() # 
     def forward(self, bg2): # 
-        # 传递系数 #####################################################
         Xe = bg2.ndata['Xe']
         q = self.Dis(Xe) # -> (6208, 16)
         bg2.ndata['q'] = q / 4 # 
         bg2.apply_edges(fn.u_dot_v('q', 'q', 'E'))
         E = bg2.edata['E']
-        bg2.edata['aij'] = self.act(E) # 吸引
-        bg2.edata['rij'] = self.act(-E) # 排斥
-        bg2.update_all(fn.copy_e('aij', 'm'), fn.sum('m', 'A_sum')) # A_sum 吸引权重之和
-        bg2.update_all(fn.copy_e('rij', 'm'), fn.sum('m', 'R_sum')) # R_sum 排斥权重之和
+        bg2.edata['aij'] = self.act(E) # 
+        bg2.edata['rij'] = self.act(-E) # 
+        bg2.update_all(fn.copy_e('aij', 'm'), fn.sum('m', 'A_sum')) # 
+        bg2.update_all(fn.copy_e('rij', 'm'), fn.sum('m', 'R_sum')) # 
         denominator = bg2.ndata['A_sum'] + bg2.ndata['R_sum'] + 1e-2 # 
-        # 传递系数 #####################################################
-        #
-        # 传递能量 ########################################################
         bg2.update_all(fn.u_mul_e('Xe', 'aij', 'm'), fn.sum('m', 'XeA_sum')) # -> (6208, 256)
         Xe_trans = (bg2.ndata['XeA_sum'] + bg2.ndata['Xe']*bg2.ndata['R_sum']) / denominator # -> (6208, 256) 
         #
         return Xe_trans # 
-        # 传递能量 ########################################################
 # =============================================================================
 # =============================================================================
 class GETLayer_inter2(nn.Module):
@@ -319,26 +294,20 @@ class GETLayer_inter2(nn.Module):
             nn.BatchNorm1d(d_model, affine=True, track_running_stats=False))
         #
     def forward(self, bg2, num_dst): # 
-        # 传递系数 #####################################################
         Xe_skip = bg2.ndata['Xe'][:num_dst] # -> (6144, 256)
         Xe_trans = self.getlayer_inter1(bg2)
         Xe = Xe_skip + self.bn(Xe_trans[:num_dst]) # -> (6208, 256) 
-        # 传递能量 ########################################################
         return Xe + self.FFN(Xe) # 
-        #
 # =============================================================================
 # =============================================================================
-class GET_inter(nn.Module): # 跨样本的能量传递
+class GET_inter(nn.Module): #
     def __init__(self, data_dir=None, device=None, numlayer=1, d_model=256):
         super(GET_inter, self).__init__()
         self.device = device
         self.cpu = th.device('cpu')
-        # 加载graph
         Trans_graphs, _ = load_graphs(data_dir + '/graph_GET_6144+384nodes.bin') 
-        self.Tg = Trans_graphs[0].to(device) # 当前源节点向目标节点传递信息
-        # 各类参数
-        self.num_src = 384 # 全局能量传递的源节点数量
-        # 网络
+        self.Tg = Trans_graphs[0].to(device) # 
+        self.num_src = 384 # 
         self.numlayer = numlayer
         self.d_model = d_model # 
         # self.fuse_encoderlist = nn.ModuleList()
@@ -346,19 +315,17 @@ class GET_inter(nn.Module): # 跨样本的能量传递
             # self.fuse_encoderlist.append( GETLayer_inter1(d_model=d_model) )
         self.trans_encoder = GETLayer_inter2(d_model=d_model)     
     ####################################################################
-    def forward(self, Xe, bg, shape): # Xe(6144, 256)  bg存有最后一层E
-        num_dst = Xe.shape[0] # 目标节点数 6144
-        # (1) 获取散度最高的384个源节点
+    def forward(self, Xe, bg, shape): # 
+        num_dst = Xe.shape[0] # 
         with th.no_grad():
-            exclude_eid = th.nonzero((bg.edata['E'].squeeze() <= 0).int()).squeeze() # ≤0的E 会被排除
-            sg = sample_neighbors(bg, bg.nodes(), -1, exclude_edges=exclude_eid, edge_dir='in') # sg的E全都大于0
-            sg.update_all(fn.copy_e('E', 'm'), fn.mean('m', 'Div')) # 节点散度
+            exclude_eid = th.nonzero((bg.edata['E'].squeeze() <= 0).int()).squeeze() # 
+            sg = sample_neighbors(bg, bg.nodes(), -1, exclude_edges=exclude_eid, edge_dir='in') # 
+            sg.update_all(fn.copy_e('E', 'm'), fn.mean('m', 'Div')) #
             sg.apply_edges(fn.u_sub_v('Div', 'Div', 'detDiv')) # 
             sg.edata['pr'] = th.relu(sg.edata['detDiv']).squeeze()
-            sg.update_all(fn.copy_e('pr', 'm'), fn.mean('m', 'pr')) # 节点被压制度
-            _, SRC_ids = th.topk(sg.ndata['pr'], self.num_src, dim=0, largest=False, sorted=True) # 选择前384个源节点中的原型节点
-        SRC = Xe[SRC_ids] # 源节点特征 -> (384, 256) 验证一下 SRC 有梯度
-        # SRC 向6144个目标节点传递信息，源节点在后面是惯例。
+            sg.update_all(fn.copy_e('pr', 'm'), fn.mean('m', 'pr')) # 
+            _, SRC_ids = th.topk(sg.ndata['pr'], self.num_src, dim=0, largest=False, sorted=True) # 
+        SRC = Xe[SRC_ids] #
         with self.Tg.local_scope():
             self.Tg.ndata['Xe'] = th.cat((Xe, SRC), dim=0) # -> (6144+384, 256)
             nfeat = self.trans_encoder(self.Tg, num_dst) # -> (6144, 256)
@@ -373,7 +340,7 @@ class EFNet(nn.Module):
         self.dmodel = dmodel
         self.Embedding = ConvEncoder()
         self.Transmitter = GSTransmitter(d_model=dmodel, d_signal=1, numlayer=6, data_dir=data_dir, device=device) # 
-        # self.get_inter = GET_inter(data_dir, device) # 全局能量传递
+        # self.get_inter = GET_inter(data_dir, device) #
         #
         self.semantic = nn.Sequential(
             Up(dmodel, dmodel*2, num_blocks=2),
@@ -385,16 +352,15 @@ class EFNet(nn.Module):
         shape = Ft.shape # (1, 256, 64, 96)
         # GST+
         Ft = Ft.reshape((self.dmodel, -1)).permute(1,0) # -> (6144, 256)
-        nfeat = self.Transmitter(Ft, bg, shape) # -> edge_hat(num_edges,) | nfeat(6144, 256) | bg 上保存了最后一层的 E
+        nfeat = self.Transmitter(Ft, bg, shape) # 
         # GET_inter
         # nfeat = self.get_inter(nfeat, bg, shape) # -> (6144, 256)
         nfeat = nfeat.permute(1,0).reshape(shape) # -> (1, 256, 64, 96)
-        # 输出
+        # 
         semantic_out = self.semantic(nfeat) # -> (1, 1, 256, 384)
         #
         return semantic_out.squeeze() # 
 #=======================================================================================================================
-"""--------------------------------- GST + Output --------------------------------"""
 #=======================================================================================================================
 
 
