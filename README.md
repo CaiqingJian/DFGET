@@ -1,7 +1,7 @@
 # DFGET
 
 ## Introduction
-This repository is the implementation of DFGET.
+This repository is the implementation of DFGET. You can follow the steps below to complete the training and testing process. The full codes will be released after the paper is published.
 
 ## Dataset
 The GlaS dataset used comes from the Gland Challenge of MICCAI 2015 [<sup>1</sup>](#refer-anchor-1), including 165 images,  
